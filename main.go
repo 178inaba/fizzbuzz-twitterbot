@@ -17,11 +17,8 @@ var (
 	accessTokenSecret = kingpin.Flag("access-token-secret", "Twitter access token secret.").Envar("ACCESS_TOKEN_SECRET").String()
 )
 
-func init() {
-	kingpin.Parse()
-}
-
 func main() {
+	kingpin.Parse()
 	if *consumerKey == "" {
 		log.Error("Consumer key is not set.")
 		return
