@@ -46,13 +46,32 @@ func main() {
 
 	var i uint64
 	for ; ; i++ {
-		api.PostTweet(fizzBuzz(i), nil)
+		tweet := tweetText(i)
+		log.Infof("Tweet: %s", tweet)
+		t, err := api.PostTweet(tweet, nil)
+		if err != nil {
+			log.Error(err)
+			continue
+		}
+
+		log.Infof("Success: %d.", t.Id)
 		time.Sleep(time.Minute)
 	}
 }
 
-func fizzBuzz(num uint64) string {
+func tweetText(num uint64) string {
+	tweet, isFB := fizzBuzz(num)
+	if isFB {
+		// Add number hashtag.
+		tweet = fmt.Sprintf("%s #%d", tweet, num)
+	}
+
+	return tweet
+}
+
+func fizzBuzz(num uint64) (string, bool) {
 	var ret string
+	isFB := true
 	if num%3 == 0 {
 		ret = "Fizz"
 	}
@@ -63,7 +82,8 @@ func fizzBuzz(num uint64) string {
 
 	if len(ret) == 0 {
 		ret = fmt.Sprint(num)
+		isFB = false
 	}
 
-	return ret
+	return ret, isFB
 }
