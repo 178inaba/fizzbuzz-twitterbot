@@ -62,7 +62,9 @@ func run() int {
 		}
 
 		log.WithField("id", t.Id).Infof("Success!")
-		time.Sleep(time.Minute)
+
+		// Next post to 00 second.
+		waitNextZeroSec()
 	}
 }
 
