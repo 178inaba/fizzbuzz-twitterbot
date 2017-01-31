@@ -6,8 +6,8 @@ drop table if exists fizzbuzz;
 create table fizzbuzz (
   id bigint not null auto_increment,
   tweet_id bigint not null,
-  num bigint not null,
+  num bigint not null unique,
   updated_at datetime not null default current_timestamp,
   created_at datetime not null,
-  primary key (id),
+  primary key (id)
 ) engine InnoDB charset utf8;
