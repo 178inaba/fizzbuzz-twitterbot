@@ -61,7 +61,7 @@ func main() {
 			break
 		}
 
-		log.Infof("Success: %d.", t.Id)
+		log.WithField("id", t.Id).Infof("Success!")
 		time.Sleep(time.Minute)
 	}
 }
