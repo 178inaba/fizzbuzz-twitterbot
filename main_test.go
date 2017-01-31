@@ -2,10 +2,44 @@ package main
 
 import (
 	"math"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestFlagValidation(t *testing.T) {
+	tt, err := flagValidation()
+	assert.Nil(t, tt)
+	assert.Error(t, err)
+
+	consumerKey := "consumer-key"
+	os.Setenv("CONSUMER_KEY", consumerKey)
+	tt, err = flagValidation()
+	assert.Nil(t, tt)
+	assert.Error(t, err)
+
+	consumerSecret := "consumer-secret"
+	os.Setenv("CONSUMER_SECRET", consumerSecret)
+	tt, err = flagValidation()
+	assert.Nil(t, tt)
+	assert.Error(t, err)
+
+	accessToken := "access-token"
+	os.Setenv("ACCESS_TOKEN", accessToken)
+	tt, err = flagValidation()
+	assert.Nil(t, tt)
+	assert.Error(t, err)
+
+	accessTokenSecret := "access-token-secret"
+	os.Setenv("ACCESS_TOKEN_SECRET", accessTokenSecret)
+	tt, err = flagValidation()
+	assert.Equal(t, consumerKey, tt.consumerKey)
+	assert.Equal(t, consumerSecret, tt.consumerSecret)
+	assert.Equal(t, accessToken, tt.accessToken)
+	assert.Equal(t, accessTokenSecret, tt.accessTokenSecret)
+	assert.NoError(t, err)
+}
 
 func TestTweetText(t *testing.T) {
 	tweet := tweetText(7)
