@@ -48,10 +48,17 @@ func main() {
 	for ; ; i++ {
 		tweet := tweetText(i)
 		log.Infof("Tweet: %s", tweet)
-		t, err := api.PostTweet(tweet, nil)
-		if err != nil {
-			log.Error(err)
-			continue
+
+		var t anaconda.Tweet
+		for {
+			var err error
+			t, err = api.PostTweet(tweet, nil)
+			if err != nil {
+				log.Error(err)
+				continue
+			}
+
+			break
 		}
 
 		log.Infof("Success: %d.", t.Id)
