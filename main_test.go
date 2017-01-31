@@ -3,9 +3,15 @@ package main
 import (
 	"math"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestWaitNextZeroSec(t *testing.T) {
+	next := nextZeroSec()
+	assert.Equal(t, 0, time.Now().Add(next).Second())
+}
 
 func TestFlagValidation(t *testing.T) {
 	strPointer := func(str string) *string {
@@ -38,6 +44,12 @@ func TestFlagValidation(t *testing.T) {
 	assert.Equal(t, *accessToken, tt.accessToken)
 	assert.Equal(t, *accessTokenSecret, tt.accessTokenSecret)
 	assert.NoError(t, err)
+
+	// Tear down.
+	consumerKey = strPointer("")
+	consumerSecret = strPointer("")
+	accessToken = strPointer("")
+	accessTokenSecret = strPointer("")
 }
 
 func TestTweetText(t *testing.T) {

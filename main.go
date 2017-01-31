@@ -66,10 +66,15 @@ func run() int {
 	}
 }
 
-func waitNextZeroSec() {
+func nextZeroSec() time.Duration {
 	n := time.Now()
 	start := time.Date(n.Year(), n.Month(), n.Day(), n.Hour(), n.Minute()+1, 0, 0, time.Local)
-	time.Sleep(start.Sub(n))
+
+	return start.Sub(n)
+}
+
+func waitNextZeroSec() {
+	time.Sleep(nextZeroSec())
 }
 
 func flagValidation() (*twitterToken, error) {
