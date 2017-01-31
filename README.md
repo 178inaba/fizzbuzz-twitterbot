@@ -17,3 +17,7 @@ $ docker build --force-rm --no-cache -t 178inaba/fizzbuzz-twitterbot .
 ```console
 $ docker run -d --restart unless-stopped -e CONSUMER_KEY=... -e CONSUMER_SECRET=... -e ACCESS_TOKEN=... -e ACCESS_TOKEN_SECRET=... --name fizzbuzz-twitterbot 178inaba/fizzbuzz-twitterbot
 ```
+
+## License
+
+[MIT](LICENSE)
