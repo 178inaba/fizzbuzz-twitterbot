@@ -21,7 +21,7 @@ type twitterToken struct {
 func main() {
 	tt, err := flagValidation()
 	if err != nil {
-		log.Errorf("Flag error: %s.", err)
+		log.Fatalf("Flag error: %s.", err)
 	}
 
 	// Create twitter client.
