@@ -1,6 +1,7 @@
 # FizzBuzz Twitter Bot
 
 [![Build Status](https://travis-ci.org/178inaba/fizzbuzz-twitterbot.svg?branch=master)](https://travis-ci.org/178inaba/fizzbuzz-twitterbot)
+[![Coverage Status](https://coveralls.io/repos/github/178inaba/fizzbuzz-twitterbot/badge.svg?branch=master)](https://coveralls.io/github/178inaba/fizzbuzz-twitterbot?branch=master)
 
 ## Docker
 
