@@ -2,42 +2,41 @@ package main
 
 import (
 	"math"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFlagValidation(t *testing.T) {
+	strPointer := func(str string) *string {
+		return &str
+	}
+
 	tt, err := flagValidation()
 	assert.Nil(t, tt)
 	assert.Error(t, err)
 
-	consumerKey := "consumer-key"
-	os.Setenv("CONSUMER_KEY", consumerKey)
+	consumerKey = strPointer("consumer-key")
 	tt, err = flagValidation()
 	assert.Nil(t, tt)
 	assert.Error(t, err)
 
-	consumerSecret := "consumer-secret"
-	os.Setenv("CONSUMER_SECRET", consumerSecret)
+	consumerSecret = strPointer("consumer-secret")
 	tt, err = flagValidation()
 	assert.Nil(t, tt)
 	assert.Error(t, err)
 
-	accessToken := "access-token"
-	os.Setenv("ACCESS_TOKEN", accessToken)
+	accessToken = strPointer("access-token")
 	tt, err = flagValidation()
 	assert.Nil(t, tt)
 	assert.Error(t, err)
 
-	accessTokenSecret := "access-token-secret"
-	os.Setenv("ACCESS_TOKEN_SECRET", accessTokenSecret)
+	accessTokenSecret = strPointer("access-token-secret")
 	tt, err = flagValidation()
-	assert.Equal(t, consumerKey, tt.consumerKey)
-	assert.Equal(t, consumerSecret, tt.consumerSecret)
-	assert.Equal(t, accessToken, tt.accessToken)
-	assert.Equal(t, accessTokenSecret, tt.accessTokenSecret)
+	assert.Equal(t, *consumerKey, tt.consumerKey)
+	assert.Equal(t, *consumerSecret, tt.consumerSecret)
+	assert.Equal(t, *accessToken, tt.accessToken)
+	assert.Equal(t, *accessTokenSecret, tt.accessTokenSecret)
 	assert.NoError(t, err)
 }
 

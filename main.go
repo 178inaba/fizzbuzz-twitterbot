@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -9,6 +10,13 @@ import (
 	"github.com/ChimeraCoder/anaconda"
 	log "github.com/Sirupsen/logrus"
 	"github.com/pkg/errors"
+)
+
+var (
+	consumerKey       = kingpin.Flag("consumer-key", "Twitter consumer key.").Envar("CONSUMER_KEY").String()
+	consumerSecret    = kingpin.Flag("consumer-secret", "Twitter consumer secret.").Envar("CONSUMER_SECRET").String()
+	accessToken       = kingpin.Flag("access-token", "Twitter access token.").Envar("ACCESS_TOKEN").String()
+	accessTokenSecret = kingpin.Flag("access-token-secret", "Twitter access token secret.").Envar("ACCESS_TOKEN_SECRET").String()
 )
 
 type twitterToken struct {
@@ -19,9 +27,15 @@ type twitterToken struct {
 }
 
 func main() {
+	kingpin.Parse()
+	os.Exit(run())
+}
+
+func run() int {
 	tt, err := flagValidation()
 	if err != nil {
-		log.Fatalf("Flag error: %s.", err)
+		log.Errorf("Flag error: %s.", err)
+		return 1
 	}
 
 	// Create twitter client.
@@ -50,33 +64,27 @@ func main() {
 }
 
 func flagValidation() (*twitterToken, error) {
-	ck := kingpin.Flag("consumer-key", "Twitter consumer key.").Envar("CONSUMER_KEY").String()
-	cs := kingpin.Flag("consumer-secret", "Twitter consumer secret.").Envar("CONSUMER_SECRET").String()
-	at := kingpin.Flag("access-token", "Twitter access token.").Envar("ACCESS_TOKEN").String()
-	ats := kingpin.Flag("access-token-secret", "Twitter access token secret.").Envar("ACCESS_TOKEN_SECRET").String()
-	kingpin.Parse()
-
-	if *ck == "" {
+	if *consumerKey == "" {
 		return nil, errors.New("consumer key is not set")
 	}
 
-	if *cs == "" {
+	if *consumerSecret == "" {
 		return nil, errors.New("consumer secret is not set")
 	}
 
-	if *at == "" {
+	if *accessToken == "" {
 		return nil, errors.New("access token is not set")
 	}
 
-	if *ats == "" {
+	if *accessTokenSecret == "" {
 		return nil, errors.New("access token secret is not set")
 	}
 
 	return &twitterToken{
-		consumerKey:       *ck,
-		consumerSecret:    *cs,
-		accessToken:       *at,
-		accessTokenSecret: *ats,
+		consumerKey:       *consumerKey,
+		consumerSecret:    *consumerSecret,
+		accessToken:       *accessToken,
+		accessTokenSecret: *accessTokenSecret,
 	}, nil
 }
 
