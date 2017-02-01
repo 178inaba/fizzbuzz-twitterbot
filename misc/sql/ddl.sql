@@ -1,13 +1,13 @@
-drop database if exists fizzbuzz_twitterbot;
-create database fizzbuzz_twitterbot character set = utf8;
-use fizzbuzz_twitterbot;
+DROP DATABASE IF EXISTS fizzbuzz_twitterbot;
+CREATE DATABASE fizzbuzz_twitterbot CHARACTER SET = utf8;
+USE fizzbuzz_twitterbot;
 
-drop table if exists fizzbuzz;
-create table fizzbuzz (
-  id bigint not null auto_increment,
-  tweet_id bigint not null,
-  num bigint not null unique,
-  updated_at datetime not null default current_timestamp,
-  created_at datetime not null,
-  primary key (id)
-) engine InnoDB charset utf8;
+DROP TABLE IF EXISTS fizzbuzz;
+CREATE TABLE fizzbuzz (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  tweet_id BIGINT NOT NULL,
+  num BIGINT NOT NULL UNIQUE,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at DATETIME NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE InnoDB CHARSET utf8;
