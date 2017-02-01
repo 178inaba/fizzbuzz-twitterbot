@@ -59,6 +59,7 @@ func run() int {
 			}
 
 			log.Error(err)
+			time.Sleep(time.Second)
 		}
 
 		log.WithField("id", t.Id).Infof("Success!")
