@@ -5,7 +5,7 @@ USE fizzbuzz_twitterbot;
 DROP TABLE IF EXISTS fizzbuzz;
 CREATE TABLE fizzbuzz (
   id BIGINT NOT NULL AUTO_INCREMENT,
-  num BIGINT NOT NULL,
+  number BIGINT NOT NULL,
   tweet VARCHAR(140) NOT NULL,
   tweet_id BIGINT,
   updated_at DATETIME NOT NULL,
