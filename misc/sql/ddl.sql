@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS error_log;
 CREATE TABLE error_log (
   id BIGINT NOT NULL AUTO_INCREMENT,
   fizzbuzz_id BIGINT NOT NULL,
-  error_message VARCHAR(255) NOT NULL,
+  error_message TEXT NOT NULL,
   updated_at DATETIME NOT NULL,
   created_at DATETIME NOT NULL,
   PRIMARY KEY (id),
