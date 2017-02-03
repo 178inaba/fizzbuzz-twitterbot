@@ -13,7 +13,7 @@ CREATE TABLE fizzbuzz (
   PRIMARY KEY (id)
 ) ENGINE InnoDB CHARSET utf8;
 
-DROP TABLE IF EXISTS error_log;
+DROP TABLE IF EXISTS post_errors;
 CREATE TABLE error_log (
   id BIGINT NOT NULL AUTO_INCREMENT,
   fizzbuzz_id BIGINT NOT NULL,
