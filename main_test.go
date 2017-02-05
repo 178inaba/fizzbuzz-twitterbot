@@ -70,23 +70,23 @@ func TestTweetText(t *testing.T) {
 }
 
 func TestFizzBuzz(t *testing.T) {
-	fb, isFB := fizzBuzz(7)
+	fb, isFB := fizzbuzz(7)
 	assert.Equal(t, "7", fb)
 	assert.False(t, isFB)
 
-	fb, isFB = fizzBuzz(18)
+	fb, isFB = fizzbuzz(18)
 	assert.Equal(t, "Fizz", fb)
 	assert.True(t, isFB)
 
-	fb, isFB = fizzBuzz(20)
+	fb, isFB = fizzbuzz(20)
 	assert.Equal(t, "Buzz", fb)
 	assert.True(t, isFB)
 
-	fb, isFB = fizzBuzz(45)
+	fb, isFB = fizzbuzz(45)
 	assert.Equal(t, "FizzBuzz", fb)
 	assert.True(t, isFB)
 
-	fb, isFB = fizzBuzz(math.MaxUint64)
+	fb, isFB = fizzbuzz(math.MaxUint64)
 	assert.Equal(t, "FizzBuzz", fb)
 	assert.True(t, isFB)
 }

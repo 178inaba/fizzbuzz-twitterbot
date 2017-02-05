@@ -106,7 +106,7 @@ func flagValidation() (*twitterToken, error) {
 }
 
 func tweetText(num uint64) string {
-	tweet, isFB := fizzBuzz(num)
+	tweet, isFB := fizzbuzz(num)
 	if isFB {
 		// Add number hashtag.
 		tweet = fmt.Sprintf("%s #%d", tweet, num)
@@ -115,7 +115,7 @@ func tweetText(num uint64) string {
 	return tweet
 }
 
-func fizzBuzz(num uint64) (string, bool) {
+func fizzbuzz(num uint64) (string, bool) {
 	var fb string
 	if num%3 == 0 {
 		fb = "Fizz"
