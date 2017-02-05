@@ -4,10 +4,10 @@ USE fizzbuzz_twitterbot;
 
 DROP TABLE IF EXISTS fizzbuzz_tweets;
 CREATE TABLE fizzbuzz_tweets (
-  id BIGINT NOT NULL AUTO_INCREMENT,
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   number BIGINT UNSIGNED NOT NULL,
   tweet VARCHAR(140) NOT NULL,
-  twitter_tweet_id BIGINT,
+  twitter_tweet_id BIGINT UNSIGNED,
   updated_at DATETIME NOT NULL,
   created_at DATETIME NOT NULL,
   PRIMARY KEY (id)
@@ -15,8 +15,8 @@ CREATE TABLE fizzbuzz_tweets (
 
 DROP TABLE IF EXISTS post_errors;
 CREATE TABLE post_errors (
-  id BIGINT NOT NULL AUTO_INCREMENT,
-  fizzbuzz_tweet_id BIGINT NOT NULL,
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  fizzbuzz_tweet_id BIGINT UNSIGNED NOT NULL,
   error_message TEXT NOT NULL,
   updated_at DATETIME NOT NULL,
   created_at DATETIME NOT NULL,
