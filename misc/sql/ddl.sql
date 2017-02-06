@@ -7,7 +7,7 @@ CREATE TABLE fizzbuzz_tweets (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   number BIGINT UNSIGNED NOT NULL,
   tweet VARCHAR(140) NOT NULL,
-  twitter_tweet_id BIGINT UNSIGNED,
+  twitter_tweet_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
   updated_at DATETIME NOT NULL,
   created_at DATETIME NOT NULL,
   PRIMARY KEY (id)
