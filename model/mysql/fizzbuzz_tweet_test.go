@@ -5,16 +5,28 @@ import (
 
 	"github.com/178inaba/fizzbuzz-twitterbot/model"
 	"github.com/178inaba/fizzbuzz-twitterbot/model/mysql"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestInsert(t *testing.T) {
-	db, err := mysql.Open("root:@/fizzbuzz_twitterbot_test?parseTime=true")
-	assert.NoError(t, err)
+type fizzbuzzTweetTestSuite struct {
+	suite.Suite
+	service mysql.FizzbuzzTweetService
+}
 
-	service := mysql.NewFizzbuzzTweetService(db)
+func TestFizzbuzzTweetSuite(t *testing.T) {
+	suite.Run(t, new(fizzbuzzTweetTestSuite))
+}
+
+func (s *fizzbuzzTweetTestSuite) SetupTest() {
+	db, err := mysql.Open("root:@/fizzbuzz_twitterbot_test?parseTime=true")
+	s.NoError(err)
+
+	s.service = mysql.NewFizzbuzzTweetService(db)
+}
+
+func (s *fizzbuzzTweetTestSuite) TestInsert() {
 	ft := &model.FizzbuzzTweet{Number: 1, Tweet: "test tweet!"}
-	id, err := service.Insert(ft)
-	assert.NoError(t, err)
-	assert.True(t, id > 0)
+	id, err := s.service.Insert(ft)
+	s.NoError(err)
+	s.True(id > 0)
 }
