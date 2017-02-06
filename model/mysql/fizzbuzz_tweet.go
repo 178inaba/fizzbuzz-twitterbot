@@ -18,6 +18,26 @@ func NewFizzbuzzTweetService(db *sql.DB) FizzbuzzTweetService {
 	return FizzbuzzTweetService{db: db}
 }
 
+// NextNumber return next fizz buzz calculation number.
+func (s FizzbuzzTweetService) NextNumber() (uint64, error) {
+	var number, twitterTweetID uint64
+	err := sq.Select("number", "twitter_tweet_id").From(model.FizzbuzzTweetTableName).
+		OrderBy("updated_at desc").Limit(1).RunWith(s.db).Scan(&number, &twitterTweetID)
+	if err != nil {
+		return 0, err
+	}
+
+	if number == 0 {
+		return 1, nil
+	}
+
+	if twitterTweetID == 0 {
+		return number, nil
+	}
+
+	return number + 1, nil
+}
+
 // Insert is insert fizzbuzz_tweets table.
 func (s FizzbuzzTweetService) Insert(f *model.FizzbuzzTweet) (uint64, error) {
 	now := time.Now().UTC()
