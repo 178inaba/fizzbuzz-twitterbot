@@ -43,12 +43,12 @@ func run() int {
 	anaconda.SetConsumerSecret(tt.consumerSecret)
 	api := anaconda.NewTwitterApi(tt.accessToken, tt.accessTokenSecret)
 
-	// Start to 00 second.
-	waitNextZeroSec()
-
 	for i := uint64(1); ; i++ {
 		tweet := tweetText(i)
 		log.Infof("Tweet: %s", tweet)
+
+		// Next post to 00 second.
+		waitNextZeroSec()
 
 		var t anaconda.Tweet
 		for {
@@ -63,9 +63,6 @@ func run() int {
 		}
 
 		log.WithField("id", t.Id).Infof("Success!")
-
-		// Next post to 00 second.
-		waitNextZeroSec()
 	}
 }
 
