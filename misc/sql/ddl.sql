@@ -1,7 +1,3 @@
-DROP DATABASE IF EXISTS fizzbuzz_twitterbot;
-CREATE DATABASE fizzbuzz_twitterbot CHARACTER SET utf8;
-USE fizzbuzz_twitterbot;
-
 DROP TABLE IF EXISTS fizzbuzz_tweets;
 CREATE TABLE fizzbuzz_tweets (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
