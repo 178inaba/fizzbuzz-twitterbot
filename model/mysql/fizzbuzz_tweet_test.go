@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/178inaba/fizzbuzz-twitterbot/model"
 	"github.com/178inaba/fizzbuzz-twitterbot/model/mysql"
@@ -34,15 +35,42 @@ func (s *fizzbuzzTweetTestSuite) SetupTest() {
 	// Reset test db.
 	_, err := sq.Delete(model.FizzbuzzTweetTableName).RunWith(s.db).Exec()
 	s.NoError(err)
-	_, err = s.db.Exec(fmt.Sprintf("ALTER TABLE %s AUTO_INCREMENT = 1", model.FizzbuzzTweetTableName))
+	_, err = s.db.Exec(fmt.Sprintf(
+		"ALTER TABLE %s AUTO_INCREMENT = 1", model.FizzbuzzTweetTableName))
 	s.NoError(err)
 }
 
 func (s *fizzbuzzTweetTestSuite) TestInsert() {
 	ft := &model.FizzbuzzTweet{Number: 1, Tweet: "test tweet!"}
-	id, err := s.service.Insert(ft)
+	insertID, err := s.service.Insert(ft)
 	s.NoError(err)
-	s.Equal(uint64(1), id)
+	s.Equal(uint64(1), insertID)
+
+	rows, err := sq.Select("*").
+		From(model.FizzbuzzTweetTableName).RunWith(s.db).Query()
+	s.NoError(err)
+
+	var cnt int
+	for rows.Next() {
+		var actual model.FizzbuzzTweet
+		err := rows.Scan(&actual.ID, &actual.Number, &actual.Tweet,
+			&actual.TwitterTweetID, &actual.UpdatedAt, &actual.CreatedAt)
+		s.NoError(err)
+
+		s.Equal(insertID, actual.ID)
+		s.Equal(ft.Number, actual.Number)
+		s.Equal(ft.Tweet, actual.Tweet)
+		s.Equal(uint64(0), actual.TwitterTweetID)
+
+		threeSecAgo := time.Now().UTC().Add(-3 * time.Second)
+		s.True(actual.UpdatedAt.After(threeSecAgo))
+		s.True(actual.CreatedAt.After(threeSecAgo))
+
+		cnt++
+	}
+
+	s.Equal(1, cnt)
+	s.NoError(rows.Err())
 }
 
 func (s *fizzbuzzTweetTestSuite) TestNextNumber() {
