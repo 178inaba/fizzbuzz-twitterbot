@@ -18,6 +18,16 @@ $ docker build --force-rm --no-cache -t 178inaba/fizzbuzz-twitterbot .
 $ docker run -d --restart unless-stopped -e CONSUMER_KEY=... -e CONSUMER_SECRET=... -e ACCESS_TOKEN=... -e ACCESS_TOKEN_SECRET=... --name fizzbuzz-twitterbot 178inaba/fizzbuzz-twitterbot
 ```
 
+## Test
+
+Require MySQL or MariaDB.
+
+```console
+$ mysql -u root < misc/sql/create_test_db.sql
+$ mysql -u root fizzbuzz_twitterbot_test < misc/sql/ddl.sql
+$ go test ./...
+```
+
 ## License
 
 [MIT](LICENSE)
