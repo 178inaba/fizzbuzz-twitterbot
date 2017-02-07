@@ -6,6 +6,7 @@ import (
 
 	"github.com/178inaba/fizzbuzz-twitterbot/model"
 	sq "github.com/Masterminds/squirrel"
+	"github.com/pkg/errors"
 )
 
 // FizzbuzzTweetService is mysql database service.
@@ -23,12 +24,10 @@ func (s FizzbuzzTweetService) NextNumber() (uint64, error) {
 	var number, twitterTweetID uint64
 	err := s.b.Select("number", "twitter_tweet_id").From(model.FizzbuzzTweetTableName).
 		OrderBy("updated_at desc").Limit(1).Scan(&number, &twitterTweetID)
-	if err != nil {
-		return 0, err
-	}
-
-	if number == 0 {
+	if err == sql.ErrNoRows {
 		return 1, nil
+	} else if err != nil {
+		return 0, err
 	}
 
 	if twitterTweetID == 0 {
@@ -58,11 +57,20 @@ func (s FizzbuzzTweetService) Insert(f *model.FizzbuzzTweet) (uint64, error) {
 
 // AddTwitterTweetID is update fizzbuzz_tweets table row of id.
 func (s FizzbuzzTweetService) AddTwitterTweetID(id, twitterTweetID uint64) error {
-	_, err := s.b.Update(model.FizzbuzzTweetTableName).
+	res, err := s.b.Update(model.FizzbuzzTweetTableName).
 		Set("twitter_tweet_id", twitterTweetID).Set("updated_at", time.Now().UTC()).
 		Where(sq.Eq{"id": id}).Exec()
 	if err != nil {
 		return err
+	}
+
+	updateCnt, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if updateCnt < 1 {
+		return errors.Errorf("row not found: %d", id)
 	}
 
 	return nil
