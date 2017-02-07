@@ -2,10 +2,11 @@ package model
 
 import "time"
 
-type postError struct {
-	id              uint64
-	fizzbuzzTweetID uint64
-	errorMessage    string
-	updatedAt       time.Time
-	createdAt       time.Time
+// PostError is post error log.
+type PostError struct {
+	ID              uint64
+	FizzbuzzTweetID uint64
+	ErrorMessage    string
+	UpdatedAt       time.Time
+	CreatedAt       time.Time
 }
