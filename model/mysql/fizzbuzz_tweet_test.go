@@ -41,6 +41,30 @@ func (s *fizzbuzzTweetTestSuite) SetupTest() {
 	s.NoError(err)
 }
 
+func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
+	// No rows.
+	tweet, err := s.service.LatestTweet()
+	s.NoError(err)
+	s.Nil(tweet)
+
+	// Row exists.
+	ft := &model.FizzbuzzTweet{Number: 1, Tweet: "test tweet!"}
+	id, err := s.service.Insert(ft)
+	s.NoError(err)
+
+	tweet, err = s.service.LatestTweet()
+	s.NoError(err)
+
+	s.Equal(id, tweet.ID)
+	s.Equal(ft.Number, tweet.Number)
+	s.Equal(ft.Tweet, tweet.Tweet)
+	s.Equal(uint64(0), tweet.TwitterTweetID)
+
+	threeSecAgo := time.Now().UTC().Add(-3 * time.Second)
+	s.True(tweet.UpdatedAt.After(threeSecAgo))
+	s.True(tweet.CreatedAt.After(threeSecAgo))
+}
+
 func (s *fizzbuzzTweetTestSuite) TestInsert() {
 	ft := &model.FizzbuzzTweet{Number: 1, Tweet: "test tweet!"}
 	insertID, err := s.service.Insert(ft)
@@ -72,12 +96,6 @@ func (s *fizzbuzzTweetTestSuite) TestInsert() {
 
 	s.Equal(1, cnt)
 	s.NoError(rows.Err())
-}
-
-func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
-	tweet, err := s.service.LatestTweet()
-	s.NoError(err)
-	s.Nil(tweet)
 }
 
 func (s *fizzbuzzTweetTestSuite) TestAddTwitterTweetID() {
