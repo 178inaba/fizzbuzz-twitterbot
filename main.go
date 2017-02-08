@@ -68,9 +68,8 @@ func run() int {
 
 func nextZeroSec() time.Duration {
 	n := time.Now()
-	start := time.Date(n.Year(), n.Month(), n.Day(), n.Hour(), n.Minute()+1, 0, 0, time.Local)
 
-	return start.Sub(n)
+	return n.Truncate(time.Minute).Add(time.Minute).Sub(n)
 }
 
 func waitNextZeroSec() {
