@@ -25,12 +25,11 @@ func NewClient(api *anaconda.TwitterApi,
 // Post is post fizz buzz tweet.
 func (c Client) Post() {
 	for i := uint64(1); ; i++ {
-		tweet := tweetText(i)
-		log.Infof("Tweet: %s", tweet)
-
 		// Next post to 00 second.
 		waitNextZeroSec()
 
+		tweet := tweetText(i)
+		log.Infof("Tweet: %s", tweet)
 		var t anaconda.Tweet
 		for {
 			var err error
