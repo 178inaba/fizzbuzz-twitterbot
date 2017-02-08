@@ -35,22 +35,26 @@ func (c Client) Post() {
 		// Next post to 00 second.
 		waitNextZeroSec()
 
-		tweet := tweetText(i)
-		c.logger.Printf("Tweet: %s.", tweet)
-		var t anaconda.Tweet
-		for {
-			var err error
-			t, err = c.api.PostTweet(tweet, nil)
-			if err == nil {
-				break
-			}
+		c.post(i)
+	}
+}
 
-			c.logger.Printf("Error: %s.", err)
-			time.Sleep(time.Second)
+func (c Client) post(i uint64) {
+	tweet := tweetText(i)
+	c.logger.Printf("Tweet: %s.", tweet)
+	var t anaconda.Tweet
+	for {
+		var err error
+		t, err = c.api.PostTweet(tweet, nil)
+		if err == nil {
+			break
 		}
 
-		c.logger.Printf("Success! Twitter Tweet ID: %d.", t.Id)
+		c.logger.Printf("Error: %s.", err)
+		time.Sleep(time.Second)
 	}
+
+	c.logger.Printf("Success! Twitter Tweet ID: %d.", t.Id)
 }
 
 func nextZeroSec() time.Duration {
