@@ -3,11 +3,16 @@ package mysql
 import (
 	"database/sql"
 
-	// This package using mysql driver.
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 
 // Open is open mysql connection.
-func Open(dsn string) (*sql.DB, error) {
-	return sql.Open("mysql", dsn)
+func Open(user, dbName string, parseTime bool) (*sql.DB, error) {
+	c := &mysql.Config{
+		User:      user,
+		DBName:    dbName,
+		ParseTime: parseTime,
+	}
+
+	return sql.Open("mysql", c.FormatDSN())
 }

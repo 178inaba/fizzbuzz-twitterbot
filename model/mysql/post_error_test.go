@@ -10,9 +10,6 @@ import (
 	"github.com/178inaba/fizzbuzz-twitterbot/model/mysql"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/suite"
-
-	// MySQL driver.
-	msd "github.com/go-sql-driver/mysql"
 )
 
 type postErrorTestSuite struct {
@@ -27,13 +24,7 @@ func TestPostErrorSuite(t *testing.T) {
 }
 
 func (s *postErrorTestSuite) SetupSuite() {
-	c := &msd.Config{
-		User:      "root",
-		DBName:    "fizzbuzz_twitterbot_test",
-		ParseTime: true,
-	}
-
-	db, err := mysql.Open(c.FormatDSN())
+	db, err := mysql.Open("root", "fizzbuzz_twitterbot_test", true)
 	s.NoError(err)
 
 	s.db = db
