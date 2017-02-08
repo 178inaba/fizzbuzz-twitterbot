@@ -2,24 +2,31 @@ package post
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"time"
 
 	"github.com/178inaba/fizzbuzz-twitterbot/model"
 	"github.com/ChimeraCoder/anaconda"
-	log "github.com/Sirupsen/logrus"
+	"github.com/Sirupsen/logrus"
 )
 
 // Client is post client.
 type Client struct {
-	api *anaconda.TwitterApi
-	fts model.FizzbuzzTweetService
-	pes model.PostErrorService
+	api    *anaconda.TwitterApi
+	fts    model.FizzbuzzTweetService
+	pes    model.PostErrorService
+	logger logrus.StdLogger
 }
 
 // NewClient is create client struct.
-func NewClient(api *anaconda.TwitterApi,
-	fts model.FizzbuzzTweetService, pes model.PostErrorService) Client {
-	return Client{api: api, fts: fts, pes: pes}
+func NewClient(api *anaconda.TwitterApi, fts model.FizzbuzzTweetService,
+	pes model.PostErrorService, logger logrus.StdLogger) Client {
+	if logger == nil {
+		logger = log.New(ioutil.Discard, "", log.LstdFlags)
+	}
+
+	return Client{api: api, fts: fts, pes: pes, logger: logger}
 }
 
 // Post is post fizz buzz tweet.
@@ -29,7 +36,7 @@ func (c Client) Post() {
 		waitNextZeroSec()
 
 		tweet := tweetText(i)
-		log.Infof("Tweet: %s", tweet)
+		c.logger.Printf("Tweet: %s.", tweet)
 		var t anaconda.Tweet
 		for {
 			var err error
@@ -38,11 +45,11 @@ func (c Client) Post() {
 				break
 			}
 
-			log.Error(err)
+			c.logger.Printf("Error: %s.", err)
 			time.Sleep(time.Second)
 		}
 
-		log.WithField("id", t.Id).Infof("Success!")
+		c.logger.Printf("Success! Twitter Tweet ID: %d.", t.Id)
 	}
 }
 

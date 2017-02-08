@@ -44,7 +44,9 @@ func run() int {
 
 	fts := mysql.NewFizzbuzzTweetService(db)
 	pes := mysql.NewPostErrorService(db)
-	c := post.NewClient(api, fts, pes)
+	c := post.NewClient(api, fts, pes, log.New())
+
+	log.Info("Run!")
 	c.Post()
 
 	return 0
