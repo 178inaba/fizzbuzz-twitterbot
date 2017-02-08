@@ -25,8 +25,7 @@ func main() {
 }
 
 func run() int {
-	err := flagValidation()
-	if err != nil {
+	if err := flagValidation(); err != nil {
 		log.Errorf("Flag error: %s.", err)
 		return 1
 	}
@@ -47,7 +46,10 @@ func run() int {
 	c := post.NewClient(api, fts, pes, log.New())
 
 	log.Info("Run!")
-	c.Post()
+	if err := c.Post(); err != nil {
+		log.Errorf("Post error: %s.", err)
+		return 1
+	}
 
 	return 0
 }

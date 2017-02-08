@@ -30,8 +30,20 @@ func NewClient(api *anaconda.TwitterApi, fts model.FizzbuzzTweetService,
 }
 
 // Post is post fizz buzz tweet.
-func (c Client) Post() {
-	for i := uint64(1); ; i++ {
+func (c Client) Post() error {
+	var number uint64
+	tweet, err := c.fts.LatestTweet()
+	if err != nil {
+		return err
+	} else if tweet == nil {
+		number = 1
+	} else if tweet.TwitterTweetID == 0 {
+		number = tweet.Number
+	} else {
+		number = tweet.Number + 1
+	}
+
+	for i := uint64(number); ; i++ {
 		// Next post to 00 second.
 		waitNextZeroSec()
 
