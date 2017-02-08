@@ -17,7 +17,7 @@ type FizzbuzzTweet struct {
 
 // FizzbuzzTweetService is service interface.
 type FizzbuzzTweetService interface {
-	NextNumber() (uint64, error)
+	LatestTweet() (*FizzbuzzTweet, error)
 	Insert(ft *FizzbuzzTweet) (uint64, error)
 	AddTwitterTweetID(id, twitterTweetID uint64) error
 }

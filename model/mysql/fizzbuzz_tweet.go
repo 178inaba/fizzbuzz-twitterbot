@@ -19,22 +19,20 @@ func NewFizzbuzzTweetService(db *sql.DB) FizzbuzzTweetService {
 	return FizzbuzzTweetService{b: sq.StatementBuilder.RunWith(db)}
 }
 
-// NextNumber return next fizz buzz calculation number.
-func (s FizzbuzzTweetService) NextNumber() (uint64, error) {
-	var number, twitterTweetID uint64
-	err := s.b.Select("number", "twitter_tweet_id").From(model.FizzbuzzTweetTableName).
-		OrderBy("updated_at desc").Limit(1).Scan(&number, &twitterTweetID)
+// LatestTweet return latest fizz buzz tweet.
+func (s FizzbuzzTweetService) LatestTweet() (*model.FizzbuzzTweet, error) {
+	ft := &model.FizzbuzzTweet{}
+	err := s.b.Select("*").From(model.FizzbuzzTweetTableName).
+		OrderBy("updated_at desc").Limit(1).
+		Scan(&ft.ID, &ft.Number, &ft.Tweet,
+			&ft.TwitterTweetID, &ft.UpdatedAt, &ft.CreatedAt)
 	if err == sql.ErrNoRows {
-		return 1, nil
+		return nil, nil
 	} else if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	if twitterTweetID == 0 {
-		return number, nil
-	}
-
-	return number + 1, nil
+	return ft, nil
 }
 
 // Insert is insert fizzbuzz_tweets table.

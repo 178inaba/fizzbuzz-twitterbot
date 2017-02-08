@@ -74,10 +74,10 @@ func (s *fizzbuzzTweetTestSuite) TestInsert() {
 	s.NoError(rows.Err())
 }
 
-func (s *fizzbuzzTweetTestSuite) TestNextNumber() {
-	number, err := s.service.NextNumber()
+func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
+	tweet, err := s.service.LatestTweet()
 	s.NoError(err)
-	s.Equal(uint64(1), number)
+	s.Nil(tweet)
 }
 
 func (s *fizzbuzzTweetTestSuite) TestAddTwitterTweetID() {
