@@ -14,3 +14,10 @@ type FizzbuzzTweet struct {
 	UpdatedAt      time.Time
 	CreatedAt      time.Time
 }
+
+// FizzbuzzTweetService is service interface.
+type FizzbuzzTweetService interface {
+	NextNumber() (uint64, error)
+	Insert(ft *FizzbuzzTweet) (uint64, error)
+	AddTwitterTweetID(id, twitterTweetID uint64) error
+}

@@ -38,11 +38,11 @@ func (s FizzbuzzTweetService) NextNumber() (uint64, error) {
 }
 
 // Insert is insert fizzbuzz_tweets table.
-func (s FizzbuzzTweetService) Insert(f *model.FizzbuzzTweet) (uint64, error) {
+func (s FizzbuzzTweetService) Insert(ft *model.FizzbuzzTweet) (uint64, error) {
 	now := time.Now().UTC()
 	res, err := s.b.Insert(model.FizzbuzzTweetTableName).Columns(
 		"number", "tweet", "updated_at", "created_at").
-		Values(f.Number, f.Tweet, now, now).Exec()
+		Values(ft.Number, ft.Tweet, now, now).Exec()
 	if err != nil {
 		return 0, err
 	}

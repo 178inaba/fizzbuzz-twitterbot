@@ -13,3 +13,8 @@ type PostError struct {
 	UpdatedAt       time.Time
 	CreatedAt       time.Time
 }
+
+// PostErrorService is service interface.
+type PostErrorService interface {
+	Insert(pe *PostError) (uint64, error)
+}
