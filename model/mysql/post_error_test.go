@@ -80,3 +80,7 @@ func (s *postErrorTestSuite) TestInsert() {
 	s.Equal(1, cnt)
 	s.NoError(rows.Err())
 }
+
+func (s *postErrorTestSuite) TearDownSuite() {
+	s.db.Close()
+}

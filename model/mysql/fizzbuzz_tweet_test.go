@@ -111,3 +111,7 @@ func (s *fizzbuzzTweetTestSuite) TestAddTwitterTweetID() {
 	err = s.service.AddTwitterTweetID(id, 1)
 	s.NoError(err)
 }
+
+func (s *fizzbuzzTweetTestSuite) TearDownSuite() {
+	s.db.Close()
+}
