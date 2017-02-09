@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db:
+    image: mariadb
+    environment:
+      - MYSQL_DATABASE=fizzbuzz_twitterbot
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./misc/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql:ro
+      - db:/var/lib/mysql
+  fizzbuzz-twitterbot:
+    build: .
+    depends_on:
+      - db
+volumes:
+  db:
