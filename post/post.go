@@ -47,26 +47,47 @@ func (c Client) Post() error {
 		// Next post to 00 second.
 		waitNextZeroSec()
 
-		c.post(i)
+		ft := &model.FizzbuzzTweet{Number: i}
+		err := c.post(ft)
+		if err != nil {
+			return err
+		}
 	}
 }
 
-func (c Client) post(i uint64) {
-	tweet := tweetText(i)
-	c.logger.Printf("Tweet: %s.", tweet)
+func (c Client) post(ft *model.FizzbuzzTweet) error {
+	ft.Tweet = tweetText(ft.Number)
+	ftID, err := c.fts.Insert(ft)
+	if err != nil {
+		return err
+	}
+
+	c.logger.Printf("Tweet: %s.", ft.Tweet)
 	var t anaconda.Tweet
 	for {
 		var err error
-		t, err = c.api.PostTweet(tweet, nil)
+		t, err = c.api.PostTweet(ft.Tweet, nil)
 		if err == nil {
 			break
+		}
+
+		pe := &model.PostError{FizzbuzzTweetID: ftID, ErrorMessage: err.Error()}
+		_, err = c.pes.Insert(pe)
+		if err != nil {
+			return err
 		}
 
 		c.logger.Printf("Error: %s.", err)
 		time.Sleep(time.Second)
 	}
 
+	err = c.fts.AddTwitterTweetID(ftID, uint64(t.Id))
+	if err != nil {
+		return err
+	}
+
 	c.logger.Printf("Success! Twitter Tweet ID: %d.", t.Id)
+	return nil
 }
 
 func nextZeroSec() time.Duration {
