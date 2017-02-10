@@ -9,7 +9,9 @@ services:
       - ./misc/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql:ro
       - db:/var/lib/mysql
   fizzbuzz-twitterbot:
-    build: .
+    build:
+      context: ../../
+      dockerfile: misc/docker/Dockerfile
     depends_on:
       - db
 volumes:
