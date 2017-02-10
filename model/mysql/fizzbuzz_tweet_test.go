@@ -24,7 +24,7 @@ func TestFizzbuzzTweetSuite(t *testing.T) {
 }
 
 func (s *fizzbuzzTweetTestSuite) SetupSuite() {
-	db, err := mysql.Open("root", "fizzbuzz_twitterbot_test")
+	db, err := mysql.Open("root", "", "fizzbuzz_twitterbot_test")
 	s.NoError(err)
 
 	s.db = db

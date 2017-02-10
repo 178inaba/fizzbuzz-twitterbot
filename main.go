@@ -5,6 +5,7 @@ import (
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
+	"github.com/178inaba/fizzbuzz-twitterbot/config"
 	"github.com/178inaba/fizzbuzz-twitterbot/model/mysql"
 	"github.com/178inaba/fizzbuzz-twitterbot/post"
 	"github.com/ChimeraCoder/anaconda"
@@ -35,7 +36,7 @@ func run() int {
 	anaconda.SetConsumerSecret(*consumerSecret)
 	api := anaconda.NewTwitterApi(*accessToken, *accessTokenSecret)
 
-	db, err := mysql.Open("root", "fizzbuzz_twitterbot")
+	db, err := mysql.Open("root", config.MySQLAddr, "fizzbuzz_twitterbot")
 	if err != nil {
 		log.Errorf("DB open error: %s.", err)
 		return 1
