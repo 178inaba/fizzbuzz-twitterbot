@@ -71,13 +71,13 @@ func (c Client) post(ft *model.FizzbuzzTweet) error {
 			break
 		}
 
+		c.logger.Printf("Error: %s.", err)
 		pe := &model.PostError{FizzbuzzTweetID: ftID, ErrorMessage: err.Error()}
 		_, err = c.pes.Insert(pe)
 		if err != nil {
 			return err
 		}
 
-		c.logger.Printf("Error: %s.", err)
 		time.Sleep(time.Second)
 	}
 

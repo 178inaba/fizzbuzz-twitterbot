@@ -3,4 +3,4 @@
 package config
 
 // MySQLAddr is MySQL database hostname.
-const MySQLAddr = "db"
+const MySQLAddr = "db:3306"

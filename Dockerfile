@@ -9,6 +9,6 @@ RUN apk update && apk add --no-cache $INSTALL_PKG || \
 WORKDIR /go/src/github.com/178inaba/fizzbuzz-twitterbot
 COPY . .
 RUN go get -d -v
-RUN go install -v
+RUN go install -v -tags docker
 
 CMD ["fizzbuzz-twitterbot"]

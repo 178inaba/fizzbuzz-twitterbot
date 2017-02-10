@@ -10,6 +10,7 @@ import (
 func Open(user, addr, dbName string) (*sql.DB, error) {
 	c := &mysql.Config{
 		User:      user,
+		Net:       "tcp",
 		Addr:      addr,
 		DBName:    dbName,
 		ParseTime: true,
