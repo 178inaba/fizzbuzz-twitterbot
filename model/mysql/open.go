@@ -7,11 +7,11 @@ import (
 )
 
 // Open is open mysql connection.
-func Open(user, dbName string, parseTime bool) (*sql.DB, error) {
+func Open(user, dbName string) (*sql.DB, error) {
 	c := &mysql.Config{
 		User:      user,
 		DBName:    dbName,
-		ParseTime: parseTime,
+		ParseTime: true,
 	}
 
 	return sql.Open("mysql", c.FormatDSN())

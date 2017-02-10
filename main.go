@@ -35,7 +35,7 @@ func run() int {
 	anaconda.SetConsumerSecret(*consumerSecret)
 	api := anaconda.NewTwitterApi(*accessToken, *accessTokenSecret)
 
-	db, err := mysql.Open("root", "fizzbuzz_twitterbot", true)
+	db, err := mysql.Open("root", "fizzbuzz_twitterbot")
 	if err != nil {
 		log.Errorf("DB open error: %s.", err)
 		return 1

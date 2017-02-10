@@ -24,7 +24,7 @@ func TestPostErrorSuite(t *testing.T) {
 }
 
 func (s *postErrorTestSuite) SetupSuite() {
-	db, err := mysql.Open("root", "fizzbuzz_twitterbot_test", true)
+	db, err := mysql.Open("root", "fizzbuzz_twitterbot_test")
 	s.NoError(err)
 
 	s.db = db
