@@ -48,7 +48,20 @@ func (c Client) Post() error {
 		// Next post to 00 second.
 		waitNextZeroSec()
 
-		err := c.post(i, ftID)
+		var tweet string
+		if ftID == 0 {
+			tweet = tweetText(number)
+			ft := &model.FizzbuzzTweet{Number: number, Tweet: tweet}
+			var err error
+			ftID, err = c.fts.Insert(ft)
+			if err != nil {
+				return err
+			}
+		} else {
+			tweet = ft.Tweet
+		}
+
+		err := c.post(tweet, ftID)
 		if err != nil {
 			return err
 		}
@@ -57,17 +70,7 @@ func (c Client) Post() error {
 	}
 }
 
-func (c Client) post(number, ftID uint64) error {
-	tweet := tweetText(number)
-	if ftID == 0 {
-		ft := &model.FizzbuzzTweet{Number: number, Tweet: tweet}
-		var err error
-		ftID, err = c.fts.Insert(ft)
-		if err != nil {
-			return err
-		}
-	}
-
+func (c Client) post(tweet string, ftID uint64) error {
 	c.logger.Printf("Tweet: %s.", tweet)
 	var t anaconda.Tweet
 	for {
