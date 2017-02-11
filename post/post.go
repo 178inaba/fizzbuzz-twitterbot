@@ -50,8 +50,8 @@ func (c Client) Post() error {
 
 		var tweet string
 		if ftID == 0 {
-			tweet = tweetText(number)
-			ft := &model.FizzbuzzTweet{Number: number, Tweet: tweet}
+			tweet = tweetText(i)
+			ft := &model.FizzbuzzTweet{Number: i, Tweet: tweet}
 			var err error
 			ftID, err = c.fts.Insert(ft)
 			if err != nil {
