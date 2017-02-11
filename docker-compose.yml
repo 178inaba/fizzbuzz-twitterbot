@@ -1,4 +1,4 @@
-version: "3"
+version: "2.1"
 services:
   db:
     image: mariadb
@@ -8,10 +8,13 @@ services:
     volumes:
       - ./misc/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql:ro
       - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root"]
   fizzbuzz-twitterbot:
     build: .
     env_file: .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 volumes:
   db:
