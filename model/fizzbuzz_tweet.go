@@ -7,8 +7,9 @@ const FizzbuzzTweetTableName = "fizzbuzz_tweets"
 
 // FizzbuzzTweet is fizz buzz tweet object.
 type FizzbuzzTweet struct {
-	ID             uint64
 	Number         uint64
+	IsFizz         bool
+	IsBuzz         bool
 	Tweet          string
 	TwitterTweetID uint64
 	UpdatedAt      time.Time
@@ -18,6 +19,6 @@ type FizzbuzzTweet struct {
 // FizzbuzzTweetService is service interface.
 type FizzbuzzTweetService interface {
 	LatestTweet() (*FizzbuzzTweet, error)
-	Insert(ft *FizzbuzzTweet) (uint64, error)
-	AddTwitterTweetID(id, twitterTweetID uint64) error
+	Insert(ft *FizzbuzzTweet) error
+	AddTwitterTweetID(twitterTweetID, number uint64) error
 }

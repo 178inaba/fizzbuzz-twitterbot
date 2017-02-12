@@ -3,6 +3,7 @@ package mysql_test
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"testing"
 	"time"
 
@@ -48,15 +49,16 @@ func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
 	s.Nil(tweet)
 
 	// Row exists.
-	ft := &model.FizzbuzzTweet{Number: 1, Tweet: "test tweet!"}
-	id, err := s.service.Insert(ft)
+	ft := &model.FizzbuzzTweet{Number: 3, IsFizz: true, IsBuzz: false, Tweet: "Fizz #3"}
+	err = s.service.Insert(ft)
 	s.NoError(err)
 
 	tweet, err = s.service.LatestTweet()
 	s.NoError(err)
 
-	s.Equal(id, tweet.ID)
 	s.Equal(ft.Number, tweet.Number)
+	s.Equal(ft.IsFizz, tweet.IsFizz)
+	s.Equal(ft.IsBuzz, tweet.IsBuzz)
 	s.Equal(ft.Tweet, tweet.Tweet)
 	s.Equal(uint64(0), tweet.TwitterTweetID)
 
@@ -66,10 +68,9 @@ func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
 }
 
 func (s *fizzbuzzTweetTestSuite) TestInsert() {
-	ft := &model.FizzbuzzTweet{Number: 1, Tweet: "test tweet!"}
-	insertID, err := s.service.Insert(ft)
+	ft := &model.FizzbuzzTweet{Number: 5, IsFizz: false, IsBuzz: true, Tweet: "Buzz #5"}
+	err := s.service.Insert(ft)
 	s.NoError(err)
-	s.Equal(uint64(1), insertID)
 
 	rows, err := sq.Select("*").
 		From(model.FizzbuzzTweetTableName).RunWith(s.db).Query()
@@ -78,12 +79,13 @@ func (s *fizzbuzzTweetTestSuite) TestInsert() {
 	var cnt int
 	for rows.Next() {
 		var actual model.FizzbuzzTweet
-		err := rows.Scan(&actual.ID, &actual.Number, &actual.Tweet,
-			&actual.TwitterTweetID, &actual.UpdatedAt, &actual.CreatedAt)
+		err := rows.Scan(&actual.Number, &actual.IsFizz, &actual.IsBuzz,
+			&actual.Tweet, &actual.TwitterTweetID, &actual.UpdatedAt, &actual.CreatedAt)
 		s.NoError(err)
 
-		s.Equal(insertID, actual.ID)
 		s.Equal(ft.Number, actual.Number)
+		s.Equal(ft.IsFizz, actual.IsFizz)
+		s.Equal(ft.IsBuzz, actual.IsBuzz)
 		s.Equal(ft.Tweet, actual.Tweet)
 		s.Equal(uint64(0), actual.TwitterTweetID)
 
@@ -104,12 +106,16 @@ func (s *fizzbuzzTweetTestSuite) TestAddTwitterTweetID() {
 	s.Error(err)
 
 	// No error.
-	ft := &model.FizzbuzzTweet{Number: 1, Tweet: "test tweet!"}
-	id, err := s.service.Insert(ft)
+	ft := &model.FizzbuzzTweet{Number: 15, IsFizz: true, IsBuzz: true, Tweet: "FizzBuzz #15"}
+	err = s.service.Insert(ft)
 	s.NoError(err)
 
-	err = s.service.AddTwitterTweetID(id, 1)
+	err = s.service.AddTwitterTweetID(math.MaxUint64, ft.Number)
 	s.NoError(err)
+
+	tweet, err := s.service.LatestTweet()
+	s.NoError(err)
+	s.Equal(uint64(math.MaxUint64), tweet.TwitterTweetID)
 }
 
 func (s *fizzbuzzTweetTestSuite) TearDownSuite() {

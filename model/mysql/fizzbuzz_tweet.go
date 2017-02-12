@@ -24,7 +24,7 @@ func (s FizzbuzzTweetService) LatestTweet() (*model.FizzbuzzTweet, error) {
 	ft := &model.FizzbuzzTweet{}
 	err := s.b.Select("*").From(model.FizzbuzzTweetTableName).
 		OrderBy("updated_at desc").Limit(1).
-		Scan(&ft.ID, &ft.Number, &ft.Tweet,
+		Scan(&ft.Number, &ft.IsFizz, &ft.IsBuzz, &ft.Tweet,
 			&ft.TwitterTweetID, &ft.UpdatedAt, &ft.CreatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -36,28 +36,23 @@ func (s FizzbuzzTweetService) LatestTweet() (*model.FizzbuzzTweet, error) {
 }
 
 // Insert is insert fizzbuzz_tweets table.
-func (s FizzbuzzTweetService) Insert(ft *model.FizzbuzzTweet) (uint64, error) {
+func (s FizzbuzzTweetService) Insert(ft *model.FizzbuzzTweet) error {
 	now := time.Now().UTC()
-	res, err := s.b.Insert(model.FizzbuzzTweetTableName).Columns(
-		"number", "tweet", "updated_at", "created_at").
-		Values(ft.Number, ft.Tweet, now, now).Exec()
+	_, err := s.b.Insert(model.FizzbuzzTweetTableName).Columns(
+		"number", "is_fizz", "is_buzz", "tweet", "updated_at", "created_at").
+		Values(ft.Number, ft.IsFizz, ft.IsBuzz, ft.Tweet, now, now).Exec()
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	lastInsertID, err := res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	return uint64(lastInsertID), nil
+	return nil
 }
 
 // AddTwitterTweetID is update fizzbuzz_tweets table row of id.
-func (s FizzbuzzTweetService) AddTwitterTweetID(id, twitterTweetID uint64) error {
+func (s FizzbuzzTweetService) AddTwitterTweetID(twitterTweetID, number uint64) error {
 	res, err := s.b.Update(model.FizzbuzzTweetTableName).
 		Set("twitter_tweet_id", twitterTweetID).Set("updated_at", time.Now().UTC()).
-		Where(sq.Eq{"id": id}).Exec()
+		Where(sq.Eq{"number": number}).Exec()
 	if err != nil {
 		return err
 	}
@@ -68,7 +63,7 @@ func (s FizzbuzzTweetService) AddTwitterTweetID(id, twitterTweetID uint64) error
 	}
 
 	if updateCnt < 1 {
-		return errors.Errorf("row not found: %d", id)
+		return errors.Errorf("row not found: %d", number)
 	}
 
 	return nil

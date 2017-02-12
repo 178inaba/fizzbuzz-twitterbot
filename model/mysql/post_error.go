@@ -22,8 +22,8 @@ func NewPostErrorService(db *sql.DB) PostErrorService {
 func (s PostErrorService) Insert(pe *model.PostError) (uint64, error) {
 	now := time.Now().UTC()
 	res, err := s.b.Insert(model.PostErrorTableName).Columns(
-		"fizzbuzz_tweet_id", "error_message", "updated_at", "created_at").
-		Values(pe.FizzbuzzTweetID, pe.ErrorMessage, now, now).Exec()
+		"fizzbuzz_tweet_number", "error_message", "updated_at", "created_at").
+		Values(pe.FizzbuzzTweetNumber, pe.ErrorMessage, now, now).Exec()
 	if err != nil {
 		return 0, err
 	}

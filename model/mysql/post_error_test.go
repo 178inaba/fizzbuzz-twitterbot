@@ -46,11 +46,11 @@ func (s *postErrorTestSuite) SetupTest() {
 func (s *postErrorTestSuite) TestInsert() {
 	// Insert parent table.
 	fts := mysql.NewFizzbuzzTweetService(s.db)
-	ft := &model.FizzbuzzTweet{Number: 1, Tweet: "test tweet!"}
-	ftInsertID, err := fts.Insert(ft)
+	ft := &model.FizzbuzzTweet{Number: 3, IsFizz: true, IsBuzz: false, Tweet: "Fizz #3"}
+	err := fts.Insert(ft)
 	s.NoError(err)
 
-	pe := &model.PostError{FizzbuzzTweetID: ftInsertID, ErrorMessage: "Error!!"}
+	pe := &model.PostError{FizzbuzzTweetNumber: ft.Number, ErrorMessage: "test"}
 	insertID, err := s.service.Insert(pe)
 	s.NoError(err)
 	s.Equal(uint64(1), insertID)
@@ -62,12 +62,12 @@ func (s *postErrorTestSuite) TestInsert() {
 	var cnt int
 	for rows.Next() {
 		var actual model.PostError
-		err := rows.Scan(&actual.ID, &actual.FizzbuzzTweetID,
+		err := rows.Scan(&actual.ID, &actual.FizzbuzzTweetNumber,
 			&actual.ErrorMessage, &actual.UpdatedAt, &actual.CreatedAt)
 		s.NoError(err)
 
 		s.Equal(insertID, actual.ID)
-		s.Equal(ftInsertID, actual.FizzbuzzTweetID)
+		s.Equal(ft.Number, actual.FizzbuzzTweetNumber)
 		s.Equal(pe.ErrorMessage, actual.ErrorMessage)
 
 		threeSecAgo := time.Now().UTC().Add(-3 * time.Second)
