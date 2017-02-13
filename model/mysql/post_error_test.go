@@ -3,6 +3,7 @@ package mysql_test
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"testing"
 	"time"
 
@@ -46,7 +47,7 @@ func (s *postErrorTestSuite) SetupTest() {
 func (s *postErrorTestSuite) TestInsert() {
 	// Insert parent table.
 	fts := mysql.NewFizzbuzzTweetService(s.db)
-	ft := &model.FizzbuzzTweet{Number: 3, IsFizz: true, IsBuzz: false, Tweet: "Fizz #3"}
+	ft := &model.FizzbuzzTweet{Number: math.MaxUint64, IsFizz: true, IsBuzz: true, Tweet: "FizzBuzz #18446744073709551615"}
 	err := fts.Insert(ft)
 	s.NoError(err)
 

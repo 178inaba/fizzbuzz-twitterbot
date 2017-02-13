@@ -49,7 +49,7 @@ func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
 	s.Nil(tweet)
 
 	// Row exists.
-	ft := &model.FizzbuzzTweet{Number: 3, IsFizz: true, IsBuzz: false, Tweet: "Fizz #3"}
+	ft := &model.FizzbuzzTweet{Number: math.MaxUint64, IsFizz: true, IsBuzz: true, Tweet: "FizzBuzz #18446744073709551615"}
 	err = s.service.Insert(ft)
 	s.NoError(err)
 
@@ -68,7 +68,7 @@ func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
 }
 
 func (s *fizzbuzzTweetTestSuite) TestInsert() {
-	ft := &model.FizzbuzzTweet{Number: 5, IsFizz: false, IsBuzz: true, Tweet: "Buzz #5"}
+	ft := &model.FizzbuzzTweet{Number: math.MaxUint64, IsFizz: true, IsBuzz: true, Tweet: "Buzz #18446744073709551615"}
 	err := s.service.Insert(ft)
 	s.NoError(err)
 

@@ -11,12 +11,14 @@ import (
 
 // FizzbuzzTweetService is mysql database service.
 type FizzbuzzTweetService struct {
-	b sq.StatementBuilderType
+	b  sq.StatementBuilderType
+	pe prepareExecer
 }
 
 // NewFizzbuzzTweetService is create service.
 func NewFizzbuzzTweetService(db *sql.DB) FizzbuzzTweetService {
-	return FizzbuzzTweetService{b: sq.StatementBuilder.RunWith(db)}
+	return FizzbuzzTweetService{
+		b: sq.StatementBuilder.RunWith(db), pe: prepareExecer{db: db}}
 }
 
 // LatestTweet return latest fizz buzz tweet.
@@ -38,9 +40,14 @@ func (s FizzbuzzTweetService) LatestTweet() (*model.FizzbuzzTweet, error) {
 // Insert is insert fizzbuzz_tweets table.
 func (s FizzbuzzTweetService) Insert(ft *model.FizzbuzzTweet) error {
 	now := time.Now().UTC()
-	_, err := s.b.Insert(model.FizzbuzzTweetTableName).Columns(
+	sql, args, err := sq.Insert(model.FizzbuzzTweetTableName).Columns(
 		"number", "is_fizz", "is_buzz", "tweet", "updated_at", "created_at").
-		Values(ft.Number, ft.IsFizz, ft.IsBuzz, ft.Tweet, now, now).Exec()
+		Values(ft.Number, ft.IsFizz, ft.IsBuzz, ft.Tweet, now, now).ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = s.pe.Exec(sql, args...)
 	if err != nil {
 		return err
 	}
@@ -50,9 +57,14 @@ func (s FizzbuzzTweetService) Insert(ft *model.FizzbuzzTweet) error {
 
 // AddTwitterTweetID is update fizzbuzz_tweets table row of id.
 func (s FizzbuzzTweetService) AddTwitterTweetID(twitterTweetID, number uint64) error {
-	res, err := s.b.Update(model.FizzbuzzTweetTableName).
+	sql, args, err := sq.Update(model.FizzbuzzTweetTableName).
 		Set("twitter_tweet_id", twitterTweetID).Set("updated_at", time.Now().UTC()).
-		Where(sq.Eq{"number": number}).Exec()
+		Where(sq.Eq{"number": number}).ToSql()
+	if err != nil {
+		return err
+	}
+
+	res, err := s.pe.Exec(sql, args...)
 	if err != nil {
 		return err
 	}
