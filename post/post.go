@@ -109,11 +109,11 @@ func waitNextZeroSec() {
 func tweetText(isFizz, isBuzz bool, num uint64) string {
 	text := fizzbuzzText(isFizz, isBuzz)
 	if len(text) > 0 {
-		// Add hashtag prefix.
-		text += " #"
+		// Add number hashtag.
+		return fmt.Sprintf("%s #%d", text, num)
 	}
 
-	return fmt.Sprintf("%s%d", text, num)
+	return fmt.Sprint(num)
 }
 
 func fizzbuzzText(isFizz, isBuzz bool) string {

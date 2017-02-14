@@ -1,6 +1,7 @@
 package post
 
 import (
+	"fmt"
 	"math"
 	"testing"
 	"time"
@@ -157,6 +158,46 @@ func BenchmarkBoolStringLen(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		tweet := stringSlice[j]
 		b.Log(len(tweet) > 0)
+
+		j++
+		if j > 3 {
+			j = 0
+		}
+	}
+}
+
+func tweetText2(isFizz, isBuzz bool, num uint64) string {
+	text := fizzbuzzText(isFizz, isBuzz)
+	if len(text) > 0 {
+		// Add hashtag prefix.
+		text += " #"
+	}
+
+	return fmt.Sprintf("%s%d", text, num)
+}
+
+func BenchmarkTweetText(b *testing.B) {
+	boolSlice := [][]bool{[]bool{false, false}, []bool{true, false}, []bool{false, true}, []bool{true, true}}
+	var j int
+	for i := 0; i < b.N; i++ {
+		isFizz, isBuzz := boolSlice[j][0], boolSlice[j][1]
+		tweet := tweetText(isFizz, isBuzz, math.MaxUint64)
+		b.Log(tweet)
+
+		j++
+		if j > 3 {
+			j = 0
+		}
+	}
+}
+
+func BenchmarkTweetText2(b *testing.B) {
+	boolSlice := [][]bool{[]bool{false, false}, []bool{true, false}, []bool{false, true}, []bool{true, true}}
+	var j int
+	for i := 0; i < b.N; i++ {
+		isFizz, isBuzz := boolSlice[j][0], boolSlice[j][1]
+		tweet := tweetText2(isFizz, isBuzz, math.MaxUint64)
+		b.Log(tweet)
 
 		j++
 		if j > 3 {
