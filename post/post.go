@@ -31,15 +31,16 @@ func NewClient(api *anaconda.TwitterApi, fts model.FizzbuzzTweetService,
 
 // Post is post fizz buzz tweet.
 func (c Client) Post() error {
-	var ftID, number uint64
+	var number uint64
+	canInsert := true
 	ft, err := c.fts.LatestTweet()
 	if err != nil {
 		return err
 	} else if ft == nil {
 		number = 1
 	} else if ft.TwitterTweetID == 0 {
-		ftID = ft.ID
 		number = ft.Number
+		canInsert = false
 	} else {
 		number = ft.Number + 1
 	}
@@ -48,29 +49,24 @@ func (c Client) Post() error {
 		// Next post to 00 second.
 		waitNextZeroSec()
 
-		var tweet string
-		if ftID == 0 {
-			tweet = tweetText(i)
-			ft := &model.FizzbuzzTweet{Number: i, Tweet: tweet}
-			var err error
-			ftID, err = c.fts.Insert(ft)
-			if err != nil {
-				return err
-			}
-		} else {
-			tweet = ft.Tweet
-		}
-
-		err := c.post(tweet, ftID)
+		err := c.post(i, canInsert)
 		if err != nil {
 			return err
 		}
 
-		ftID = 0
+		canInsert = true
 	}
 }
 
-func (c Client) post(tweet string, ftID uint64) error {
+func (c Client) post(number uint64, canInsert bool) error {
+	tweet := tweetText(number)
+	if canInsert {
+		err := c.fts.Insert(&model.FizzbuzzTweet{Number: number, Tweet: tweet})
+		if err != nil {
+			return err
+		}
+	}
+
 	c.logger.Printf("Tweet: %s.", tweet)
 	var t anaconda.Tweet
 	for {
@@ -81,7 +77,7 @@ func (c Client) post(tweet string, ftID uint64) error {
 		}
 
 		c.logger.Printf("Error: %s.", err)
-		pe := &model.PostError{FizzbuzzTweetID: ftID, ErrorMessage: err.Error()}
+		pe := &model.PostError{FizzbuzzTweetNumber: number, ErrorMessage: err.Error()}
 		_, err = c.pes.Insert(pe)
 		if err != nil {
 			return err
@@ -90,7 +86,7 @@ func (c Client) post(tweet string, ftID uint64) error {
 		time.Sleep(time.Second)
 	}
 
-	err := c.fts.AddTwitterTweetID(ftID, uint64(t.Id))
+	err := c.fts.AddTwitterTweetID(uint64(t.Id), number)
 	if err != nil {
 		return err
 	}
