@@ -5,7 +5,7 @@ import "time"
 // FizzbuzzTweetTableName is fizzbuzz tweet table name.
 const FizzbuzzTweetTableName = "fizzbuzz_tweets"
 
-// FizzbuzzTweet is fizz buzz tweet object.
+// FizzbuzzTweet is fizzbuzz tweet object.
 type FizzbuzzTweet struct {
 	Number         uint64
 	IsFizz         bool
