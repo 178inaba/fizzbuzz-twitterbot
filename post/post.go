@@ -31,46 +31,43 @@ func NewClient(api *anaconda.TwitterApi, fts model.FizzbuzzTweetService,
 
 // Post is post fizz buzz tweet.
 func (c Client) Post() error {
-	var ftID, number uint64
+	var num uint64
+	canInsert := true
 	ft, err := c.fts.LatestTweet()
 	if err != nil {
 		return err
 	} else if ft == nil {
-		number = 1
+		num = 1
 	} else if ft.TwitterTweetID == 0 {
-		ftID = ft.ID
-		number = ft.Number
+		num = ft.Number
+		canInsert = false
 	} else {
-		number = ft.Number + 1
+		num = ft.Number + 1
 	}
 
-	for i := uint64(number); ; i++ {
+	for i := uint64(num); ; i++ {
 		// Next post to 00 second.
 		waitNextZeroSec()
 
-		var tweet string
-		if ftID == 0 {
-			tweet = tweetText(i)
-			ft := &model.FizzbuzzTweet{Number: i, Tweet: tweet}
-			var err error
-			ftID, err = c.fts.Insert(ft)
-			if err != nil {
-				return err
-			}
-		} else {
-			tweet = ft.Tweet
-		}
-
-		err := c.post(tweet, ftID)
+		err := c.post(i, canInsert)
 		if err != nil {
 			return err
 		}
 
-		ftID = 0
+		canInsert = true
 	}
 }
 
-func (c Client) post(tweet string, ftID uint64) error {
+func (c Client) post(num uint64, canInsert bool) error {
+	isFizz, isBuzz := fizzbuzz(num)
+	tweet := tweetText(isFizz, isBuzz, num)
+	if canInsert {
+		err := c.fts.Insert(&model.FizzbuzzTweet{Number: num, IsFizz: isFizz, IsBuzz: isBuzz, Tweet: tweet})
+		if err != nil {
+			return err
+		}
+	}
+
 	c.logger.Printf("Tweet: %s.", tweet)
 	var t anaconda.Tweet
 	for {
@@ -81,7 +78,7 @@ func (c Client) post(tweet string, ftID uint64) error {
 		}
 
 		c.logger.Printf("Error: %s.", err)
-		pe := &model.PostError{FizzbuzzTweetID: ftID, ErrorMessage: err.Error()}
+		pe := &model.PostError{FizzbuzzTweetNumber: num, ErrorMessage: err.Error()}
 		_, err = c.pes.Insert(pe)
 		if err != nil {
 			return err
@@ -90,7 +87,7 @@ func (c Client) post(tweet string, ftID uint64) error {
 		time.Sleep(time.Second)
 	}
 
-	err := c.fts.AddTwitterTweetID(ftID, uint64(t.Id))
+	err := c.fts.AddTwitterTweetID(uint64(t.Id), num)
 	if err != nil {
 		return err
 	}
@@ -109,31 +106,37 @@ func waitNextZeroSec() {
 	time.Sleep(nextZeroSec())
 }
 
-func tweetText(num uint64) string {
-	tweet, isFB := fizzbuzz(num)
-	if isFB {
+func tweetText(isFizz, isBuzz bool, num uint64) string {
+	text := fizzbuzzText(isFizz, isBuzz)
+	if len(text) > 0 {
 		// Add number hashtag.
-		tweet = fmt.Sprintf("%s #%d", tweet, num)
+		return fmt.Sprintf("%s #%d", text, num)
 	}
 
-	return tweet
+	return fmt.Sprint(num)
 }
 
-func fizzbuzz(num uint64) (string, bool) {
-	var fb string
+func fizzbuzzText(isFizz, isBuzz bool) string {
+	var text string
+	if isFizz {
+		text = "Fizz"
+	}
+
+	if isBuzz {
+		text += "Buzz"
+	}
+
+	return text
+}
+
+func fizzbuzz(num uint64) (isFizz, isBuzz bool) {
 	if num%3 == 0 {
-		fb = "Fizz"
+		isFizz = true
 	}
 
 	if num%5 == 0 {
-		fb += "Buzz"
+		isBuzz = true
 	}
 
-	isFB := true
-	if len(fb) == 0 {
-		fb = fmt.Sprint(num)
-		isFB = false
-	}
-
-	return fb, isFB
+	return isFizz, isBuzz
 }
