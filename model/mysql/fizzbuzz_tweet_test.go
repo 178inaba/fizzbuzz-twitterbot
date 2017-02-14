@@ -17,7 +17,7 @@ type fizzbuzzTweetTestSuite struct {
 	suite.Suite
 
 	db      *sql.DB
-	service mysql.FizzbuzzTweetService
+	service model.FizzbuzzTweetService
 }
 
 func TestFizzbuzzTweetSuite(t *testing.T) {

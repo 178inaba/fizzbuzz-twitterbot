@@ -17,7 +17,7 @@ type postErrorTestSuite struct {
 	suite.Suite
 
 	db      *sql.DB
-	service mysql.PostErrorService
+	service model.PostErrorService
 }
 
 func TestPostErrorSuite(t *testing.T) {
