@@ -31,21 +31,21 @@ func NewClient(api *anaconda.TwitterApi, fts model.FizzbuzzTweetService,
 
 // Post is post fizz buzz tweet.
 func (c Client) Post() error {
-	var number uint64
+	var num uint64
 	canInsert := true
 	ft, err := c.fts.LatestTweet()
 	if err != nil {
 		return err
 	} else if ft == nil {
-		number = 1
+		num = 1
 	} else if ft.TwitterTweetID == 0 {
-		number = ft.Number
+		num = ft.Number
 		canInsert = false
 	} else {
-		number = ft.Number + 1
+		num = ft.Number + 1
 	}
 
-	for i := uint64(number); ; i++ {
+	for i := uint64(num); ; i++ {
 		// Next post to 00 second.
 		waitNextZeroSec()
 
@@ -58,10 +58,11 @@ func (c Client) Post() error {
 	}
 }
 
-func (c Client) post(number uint64, canInsert bool) error {
-	tweet := tweetText(number)
+func (c Client) post(num uint64, canInsert bool) error {
+	isFizz, isBuzz := fizzbuzz(num)
+	tweet := tweetText(isFizz, isBuzz, num)
 	if canInsert {
-		err := c.fts.Insert(&model.FizzbuzzTweet{Number: number, Tweet: tweet})
+		err := c.fts.Insert(&model.FizzbuzzTweet{Number: num, IsFizz: isFizz, IsBuzz: isBuzz, Tweet: tweet})
 		if err != nil {
 			return err
 		}
@@ -77,7 +78,7 @@ func (c Client) post(number uint64, canInsert bool) error {
 		}
 
 		c.logger.Printf("Error: %s.", err)
-		pe := &model.PostError{FizzbuzzTweetNumber: number, ErrorMessage: err.Error()}
+		pe := &model.PostError{FizzbuzzTweetNumber: num, ErrorMessage: err.Error()}
 		_, err = c.pes.Insert(pe)
 		if err != nil {
 			return err
@@ -86,7 +87,7 @@ func (c Client) post(number uint64, canInsert bool) error {
 		time.Sleep(time.Second)
 	}
 
-	err := c.fts.AddTwitterTweetID(uint64(t.Id), number)
+	err := c.fts.AddTwitterTweetID(uint64(t.Id), num)
 	if err != nil {
 		return err
 	}
@@ -105,31 +106,37 @@ func waitNextZeroSec() {
 	time.Sleep(nextZeroSec())
 }
 
-func tweetText(num uint64) string {
-	tweet, isFB := fizzbuzz(num)
-	if isFB {
-		// Add number hashtag.
-		tweet = fmt.Sprintf("%s #%d", tweet, num)
+func tweetText(isFizz, isBuzz bool, num uint64) string {
+	text := fizzbuzzText(isFizz, isBuzz)
+	if len(text) > 0 {
+		// Add hashtag prefix.
+		text += " #"
 	}
 
-	return tweet
+	return fmt.Sprintf("%s%d", text, num)
 }
 
-func fizzbuzz(num uint64) (string, bool) {
-	var fb string
+func fizzbuzzText(isFizz, isBuzz bool) string {
+	var text string
+	if isFizz {
+		text = "Fizz"
+	}
+
+	if isBuzz {
+		text += "Buzz"
+	}
+
+	return text
+}
+
+func fizzbuzz(num uint64) (isFizz, isBuzz bool) {
 	if num%3 == 0 {
-		fb = "Fizz"
+		isFizz = true
 	}
 
 	if num%5 == 0 {
-		fb += "Buzz"
+		isBuzz = true
 	}
 
-	isFB := true
-	if len(fb) == 0 {
-		fb = fmt.Sprint(num)
-		isFB = false
-	}
-
-	return fb, isFB
+	return isFizz, isBuzz
 }
