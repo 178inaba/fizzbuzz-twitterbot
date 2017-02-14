@@ -21,7 +21,7 @@ $ docker run -d --restart unless-stopped -e CONSUMER_KEY=... -e CONSUMER_SECRET=
 ### Compose
 
 ```console
-$ docker-compose up --build
+$ docker-compose up -d --build
 ```
 
 ## Test
