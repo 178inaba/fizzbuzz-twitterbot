@@ -32,8 +32,6 @@ func (s *prepareExecerSuite) SetupTest() {
 	// Reset test db.
 	_, err = s.db.Exec("SET FOREIGN_KEY_CHECKS = 0")
 	s.NoError(err)
-	_, err = s.db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", model.PostErrorTableName))
-	s.NoError(err)
 	_, err = s.db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", model.FizzbuzzTweetTableName))
 	s.NoError(err)
 	_, err = s.db.Exec("SET FOREIGN_KEY_CHECKS = 1")
