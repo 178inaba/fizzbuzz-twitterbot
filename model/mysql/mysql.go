@@ -28,6 +28,7 @@ func (r prepareExecer) Exec(query string, args ...interface{}) (sql.Result, erro
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
 
 	res, err := stmt.Exec(args...)
 	if err != nil {
