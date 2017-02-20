@@ -34,13 +34,13 @@ func (s *postErrorTestSuite) SetupSuite() {
 
 func (s *postErrorTestSuite) SetupTest() {
 	// Reset test db.
-	_, err := s.db.Exec("SET FOREIGN_KEY_CHECKS = 0")
+	_, err := s.db.Exec("SET foreign_key_checks = 0")
 	s.NoError(err)
 	_, err = s.db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", model.PostErrorTableName))
 	s.NoError(err)
 	_, err = s.db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", model.FizzbuzzTweetTableName))
 	s.NoError(err)
-	_, err = s.db.Exec("SET FOREIGN_KEY_CHECKS = 1")
+	_, err = s.db.Exec("SET foreign_key_checks = 1")
 	s.NoError(err)
 }
 
