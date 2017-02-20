@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type fizzbuzzTweetTestSuite struct {
+type fizzbuzzTweetSuite struct {
 	suite.Suite
 
 	db      *sql.DB
@@ -21,10 +21,10 @@ type fizzbuzzTweetTestSuite struct {
 }
 
 func TestFizzbuzzTweetSuite(t *testing.T) {
-	suite.Run(t, new(fizzbuzzTweetTestSuite))
+	suite.Run(t, new(fizzbuzzTweetSuite))
 }
 
-func (s *fizzbuzzTweetTestSuite) SetupSuite() {
+func (s *fizzbuzzTweetSuite) SetupSuite() {
 	db, err := mysql.Open("root", "", "fizzbuzz_twitterbot_test")
 	s.NoError(err)
 
@@ -32,7 +32,7 @@ func (s *fizzbuzzTweetTestSuite) SetupSuite() {
 	s.service = mysql.NewFizzbuzzTweetService(db)
 }
 
-func (s *fizzbuzzTweetTestSuite) SetupTest() {
+func (s *fizzbuzzTweetSuite) SetupTest() {
 	// Reset test db.
 	_, err := s.db.Exec("SET foreign_key_checks = 0")
 	s.NoError(err)
@@ -42,7 +42,7 @@ func (s *fizzbuzzTweetTestSuite) SetupTest() {
 	s.NoError(err)
 }
 
-func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
+func (s *fizzbuzzTweetSuite) TestLatestTweet() {
 	// No rows.
 	tweet, err := s.service.LatestTweet()
 	s.NoError(err)
@@ -67,7 +67,7 @@ func (s *fizzbuzzTweetTestSuite) TestLatestTweet() {
 	s.True(tweet.CreatedAt.After(threeSecAgo))
 }
 
-func (s *fizzbuzzTweetTestSuite) TestInsert() {
+func (s *fizzbuzzTweetSuite) TestInsert() {
 	ft := &model.FizzbuzzTweet{Number: math.MaxUint64, IsFizz: true, IsBuzz: true, Tweet: "Buzz #18446744073709551615"}
 	err := s.service.Insert(ft)
 	s.NoError(err)
@@ -100,7 +100,7 @@ func (s *fizzbuzzTweetTestSuite) TestInsert() {
 	s.NoError(rows.Err())
 }
 
-func (s *fizzbuzzTweetTestSuite) TestAddTwitterTweetID() {
+func (s *fizzbuzzTweetSuite) TestAddTwitterTweetID() {
 	// Error.
 	err := s.service.AddTwitterTweetID(1, 1)
 	s.Error(err)
@@ -118,6 +118,6 @@ func (s *fizzbuzzTweetTestSuite) TestAddTwitterTweetID() {
 	s.Equal(uint64(math.MaxUint64), tweet.TwitterTweetID)
 }
 
-func (s *fizzbuzzTweetTestSuite) TearDownSuite() {
+func (s *fizzbuzzTweetSuite) TearDownSuite() {
 	s.db.Close()
 }
