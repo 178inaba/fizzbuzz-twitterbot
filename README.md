@@ -20,8 +20,16 @@ $ docker run -d --restart unless-stopped -e CONSUMER_KEY=... -e CONSUMER_SECRET=
 
 ### Compose
 
+#### Up
+
 ```console
 $ docker-compose up -d --build
+```
+
+#### Down
+
+```console
+$ docker-compose down
 ```
 
 ## Test
