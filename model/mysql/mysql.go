@@ -13,6 +13,7 @@ func Open(user, addr, dbName string) (*sql.DB, error) {
 		Net:       "tcp",
 		Addr:      addr,
 		DBName:    dbName,
+		Collation: "utf8mb4_bin",
 		ParseTime: true,
 	}
 

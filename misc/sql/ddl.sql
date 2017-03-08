@@ -8,7 +8,7 @@ CREATE TABLE fizzbuzz_tweets (
   updated_at DATETIME NOT NULL,
   created_at DATETIME NOT NULL,
   PRIMARY KEY (number)
-) ENGINE InnoDB CHARSET utf8;
+) ENGINE InnoDB COLLATE utf8mb4_bin;
 
 DROP TABLE IF EXISTS post_errors;
 CREATE TABLE post_errors (
@@ -19,4 +19,4 @@ CREATE TABLE post_errors (
   created_at DATETIME NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (fizzbuzz_tweet_number) REFERENCES fizzbuzz_tweets (number)
-) ENGINE InnoDB CHARSET utf8;
+) ENGINE InnoDB COLLATE utf8mb4_bin;
