@@ -1,6 +1,7 @@
 version: "2.1"
 services:
   db:
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
     image: mariadb
     environment:
       - MYSQL_DATABASE=fizzbuzz_twitterbot
